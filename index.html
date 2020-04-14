@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>quadcopter</title>
+    <meta charset="utf-8">
+    <style>
+    #info{
+     position:absolute;
+     top:2%;
+     width:100%;
+     color:yellow;
+     text-align:center;
+     }
+    #text{
+     position:absolute;
+     bottom:2%;
+     width:100%;
+     color: #ffff00;
+     text-align:center;
+     }
+	#yreftext {
+	  width:2%
+	}
+      body {
+        overflow:hidden;
+      }
+    </style>
+
+  </head>
+<body>
+<div id="info">
+	 <p>Up/Down to Change Hover Altitude</p>
+	 <button id="thrustUp">T+</button>
+	 <button id="thrustDo">T-</button>
+	 <br>
+	 <input id="yreftext" type="text" value=2>
+	 <input type=range min=1 max=10 step="0.1" value = 2 id='gain'>
+   <div style="width:35%;background-color:white;padding:2px">
+     <canvas id="canvas"></canvas>
+   </div>
+</div>
+<div id="text"></div>
+<script src="Chart.js"></script>
+<script src="https://www.chartjs.org/samples/latest/utils.js"></script>
+<script src="https://threejs.org/build/three.js"></script>
+<script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="qcommon.js"></script>
+<script>
+//chart
+var ctx, omega = 0, omega2 = 0, nextTime= 0;
+var config = {
+        type: 'line',
+        data: {
+            labels: [.0],
+            datasets: [{
+                label: 'KP = 20, KI = 6, KD = 13',
+                backgroundColor: window.chartColors.red,
+                borderColor: window.chartColors.red,
+                data: [0],
+                fill: false,
+            },{
+                label: 'KP = 30, KI = 6, KD = 13',
+                fill: false,
+                backgroundColor: window.chartColors.blue,
+                borderColor: window.chartColors.blue,
+                data: [0],
+            }
+          ]
+        },
+        options: {
+            animation: false,
+            //Boolean - If we want to override with a hard coded scale
+            scaleOverride: true,
+            responsive: true,
+            title: {
+                display: true,
+                text: 'PID feedback'
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        drawBorder: false,
+                        color: ['pink', 'red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'purple']
+                    },
+                    ticks: {
+                        min: 0,
+                        max: 50,
+                        stepSize: 10
+                    }
+                }]
+            }
+        }
+    };
+
+    window.onload = function() {
+        ctx = document.getElementById('canvas').getContext('2d');
+        var myLineChart = new Chart(ctx, config);
+    };
+
+  setInterval(function() {
+    if(config.data.labels.length < 50){
+      setData(config.data.datasets[0].data);
+      setData2(config.data.datasets[1].data);
+      setLabels(config.data.labels);
+      var myLineChart = new Chart(ctx, config);
+    }
+  }, 50);
+
+  function setLabels(labels) {
+    nextTime+=0.05;
+    labels.push(nextTime.toFixed(2));
+    //labels.shift();
+  }
+
+  function setData(data) {
+    data.push(omega);
+    //data.shift();
+  }
+  function setData2(data) {
+    data.push(omega2);
+    //data.shift();
+  }
+///////////////////////////////////////////////////////////////////////////////////
+var world, body;
+var camera, scene, renderer, clock, keyboard, airplane;
+var yref = 2;
+var omegaGain = 1.0;
+var omegaHover;
+
+const SIZE = 1;
+const PROP_KK = 0.1;
+
+init();
+animate();
+
+function init() {
+	keyboard = new KeyboardState();
+    initThree();
+    initCannon();
+    //pidR2 = new PIDControllerR2();
+	/////////////////////////////
+	// omegaHover: stable hover speed
+	omegaHover = Math.sqrt ( body.mass * world.gravity.length()/4/PROP_KK );
+}
+
+
+function hoverServo (dt) {  // pass dt for integral control
+	let yy = body.position.y;
+	let vv = body.velocity.y;
+
+	let error = yref - yy;
+	if (hoverServo.integral === undefined)
+		hoverServo.integral = 0;
+	hoverServo.integral += error*dt;
+
+	const KP = 20;
+	const KI = 6;
+	const KD = 13;
+	omega = KP*error + KI*hoverServo.integral + KD*(-vv);
+  //////////////////////////////////////////////////////////////
+  let kp2 = 30, ki2 = 6, kd2 = 13;
+  omega2 = kp2*error + ki2*hoverServo.integral + kd2*(-vv);
+  //////////////////////////////////////////////////////////////
+	console.log ('pp: ' + (KP*error).toFixed(2))
+	console.log ('pi: ' + (KI*hoverServo.integral).toFixed(2))
+	console.log ('pd: ' + (KD*(-vv)).toFixed(2))
+	console.log ('error: ' + error.toFixed(3) + ': omega: ' + omega.toFixed(2))
+	return omega;
+}
+
+function animate() {
+	let dt = clock.getDelta();
+
+	// not in thrust+/- mode, activate hoverServo
+	if (omegaGain === 1.0)
+		omega = hoverServo(dt);
+	else
+		omega = omegaGain*omegaHover;  // this looks much better
+	//omega *= omegaGain;      // this has too much acceleration
+
+	omega = Math.clamp (omega, 0, 50);
+
+	let f = PROP_KK*omega*omega;
+	body.applyLocalForce (new CANNON.Vec3(0,f,0), new CANNON.Vec3(-1.2*SIZE, 0, SIZE) )
+	body.applyLocalForce (new CANNON.Vec3(0,f,0), new CANNON.Vec3(-1.2*SIZE, 0, -SIZE) )
+	body.applyLocalForce (new CANNON.Vec3(0,f,0), new CANNON.Vec3( 1.2*SIZE, 0, -SIZE) )
+	body.applyLocalForce (new CANNON.Vec3(0,f,0), new CANNON.Vec3( 1.2*SIZE, 0, SIZE) )
+
+	// since four torques cancel out, no torque need to add to body from propeller push
+
+	requestAnimationFrame( animate );
+	renderer.render( scene, camera );
+	handleKeys();
+	updatePhysics();
+
+	// render propeller in airplane
+	airplane.children[0].children[0].rotation.y += omega*dt;
+	airplane.children[1].children[0].rotation.y -= omega*dt;
+	airplane.children[2].children[0].rotation.y += omega*dt;
+	airplane.children[3].children[0].rotation.y -= omega*dt;
+}
+
+function handleKeys () {
+	keyboard.update();
+	const RATIO = 1.0003;
+
+	if (keyboard.pressed('up')) {
+		$('#thrustUp').css ("background-color",  'red');
+		omegaGain *= RATIO;
+	}
+	if (keyboard.up('up')) {
+		yref = body.position.y;
+		console.log ('set yref: ' + yref);
+		omegaGain = 1;
+		//omega = omega0; // with the new gain method, this is not required
+		$('#thrustUp').css ("background-color",  'white');
+	}
+
+	if (keyboard.pressed('down')) {
+		$('#thrustDo').css ("background-color",  'yellow');
+		omegaGain /= RATIO;
+	}
+	if (keyboard.up('down')) {
+		yref = body.position.y;
+		console.log ('set yref: ' + yref);
+		$('#thrustDo').css ("background-color",  'white');
+		omegaGain = 1;
+		//omega = omega0;
+	}
+
+    $('#gain').val (omegaGain);
+	$('#yreftext').val (yref.toFixed(2));
+	//console.log (omega.toFixed(2) + ',' + body.position.y.toFixed(2))
+}
+
+function updatePhysics() {
+	var timeStep=1/60;
+	world.step(timeStep);
+
+	// Copy coordinates from Cannon.js to Three.js
+	airplane.position.copy(body.position);
+	airplane.quaternion.copy(body.quaternion);
+
+	$('#text').html (`${omegaGain.toFixed(3)}:[ ${body.position.x.toFixed(2)}, ${body.position.y.toFixed(2)},
+	  ${body.position.z.toFixed(2)} ] `);
+
+}
+</script>
+</body>
+</html>
