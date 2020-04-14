@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <link href="css/first.css" rel="stylesheet" type="text/css" />
+    <style>
+    .container{
+  width:1440px;
+  height:2000px;
+  margin:0 auto;
+}
+.bg{
+  width:1440px;
+  height:2000px;
+}
+.main{
+  width:1440px;
+  height:2000px;
+  position:relative;
+  top:-2000px;
+  z-index:20;
+}
+
+/*以下是对问题没有影响的网页内容*/
+
+.first{
+  width:544px;
+  height:60px;
+  background:#51afd9;
+  float:right;
+  margin-top:34px;
+  font-size:17px;
+  color:#3783a9;
+  line-height:60px;
+}
+.infirst1{
+  font-size:17px;
+  text-decoration:none;
+  font-family:"黑体";
+  margin-left:246px;
+}
+.infirst2{
+  font-size:17px;
+  text-decoration:none;
+  font-family:"黑体";
+  margin-left:30px;
+}
+.infirst3{
+  font-size:17px;
+  text-decoration:none;
+  font-family:"黑体";
+  margin-left:30px;
+}
+.infirst1:hover{
+  color:#ffffff;
+}
+.infirst2:hover{
+  color:#ffffff;
+}
+.infirst3:hover{
+  color:#ffffff;
+}
+.second{
+  text-align:center;
+  font-size:28px;
+  color:#255474;
+  font-family:"黑体";
+  float:left;
+  margin-left:495px;
+  margin-top:115px;
+}
+.third{
+  width:941px;
+  height:334px;
+  color:#255474;
+  float:left;
+  margin-left:250px;
+  font-family:"黑体";
+}
+.inthird{
+  margin-top:80px;
+  font-size:22px;
+}
+.one{
+  width:243px;
+  height:243px;
+  background-image:url(../images/one.png);
+  overflow:hidden;
+  border-radius:50%;
+  float:right;
+  margin-top:-210px;
+}
+.line{
+  width:906px;
+  height:3px;
+  background-color:#84bbe1;
+  float:left;
+  margin-left:250px;
+}
+.fourth{
+  width:941px;
+  height:334px;
+  color:#255474;
+  float:left;
+  margin-left:250px;
+  font-family:"黑体";
+}
+.infourth{
+  margin-top:80px;
+  font-size:22px;
+}
+.two{
+  width:243px;
+  height:243px;
+  background-image:url(../images/two.png);
+  overflow:hidden;
+  border-radius:50%;
+  float:right;
+  margin-top:-190px;
+}
+.line2{
+  width:906px;
+  height:3px;
+  background-color:#84bbe1;
+  float:left;
+  margin-top:58px;
+}
+.fifth{
+  width:941px;
+  height:334px;
+  color:#255474;
+  float:left;
+  font-family:"黑体";
+}
+.three{
+  width:243px;
+  height:243px;
+  background-image:url(../images/three.png);
+  overflow:hidden;
+  border-radius:50%;
+  float:right;
+  margin-top:-155px;
+}
+.line3{
+  width:906px;
+  height:3px;
+  background-color:#84bbe1;
+  float:left;
+}
+.sixth{
+  width:941px;
+  height:334px;
+  color:#255474;
+  float:left;
+  font-family:"黑体";
+}
+.four{
+  width:243px;
+  height:243px;
+  background-image:url(../images/four.png);
+  overflow:hidden;
+  border-radius:50%;
+  float:right;
+  margin-top:-155px;
+}
+.seventh{
+  width:941px;
+  height:334px;
+  color:#255474;
+  float:left;
+  font-family:"黑体";
+}
+.five{
+  width:243px;
+  height:243px;
+  background-image:url(../images/five.png);
+  overflow:hidden;
+  border-radius:50%;
+  float:right;
+  margin-top:-295px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="one" class="one1"></canvas>
+    <script type="text/javascript">
+    var canvas=document.getElementById('one');
+    one.width="1440";
+    one.height="2000";
+    one.style.border="0px solid";
+    var ctx=one.getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(500,0);
+    ctx.lineTo(0,500);
+    ctx.closePath();
+    ctx.fillStyle = '#9aebff';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(1092,0);
+    ctx.lineTo(1440,0);
+    ctx.lineTo(1440,2000);
+    ctx.lineTo(768,2000);
+    ctx.closePath();
+    ctx.fillStyle = '#9aebff';
+    ctx.fill();
+    </script>
+
+        <div class="main">
+<!-- 以下是对问题没有影响的网页内容 -->
+        <div class="first">
+            <a href="#" class="infirst1">首页
+            </a>
+            <a href="#" class="infirst2">版块介绍
+            </a>
+            <a href="#" class="infirst3">各个部门
+            </a>
+        </div>
+        <div class="second">
+            各个部门
+            <p class="insecond2">Various&nbsp;departments
+            </p>
+        </div>
+        <div class="third">
+            <p class="inthird">采编部</p>
+            <p>对待工作认真，踏实肯干，有团队合作精神</p>
+            <p>热爱文学写作、有良好的语言表达能力和沟通能力</p>
+            <p>对摄影、摄像感兴趣（不要求较高的专业基础）</p>
+            <p>思路开阔、清晰，具有一定创新能力</p>
+            <div class="one">
+            </div>
+        </div>
+        <hr class="line"/>
+        <div class="fourth">
+            <p class="infourth">美编部</p>
+            <p>具有良好的电脑作图能力和色彩感，并有独特的创意及审美理念</p>
+            <p>具有良好的图片处理能力和策划能力</p>
+            <p>对PS、AI等专业软件具有一定兴趣（不要求较高的专业基础）</p>
+            <div class="two">
+            </div>
+        <div>
+        <hr class="line2"/>
+        <div class="fifth">
+            <p class="infourth">技术部</p>
+            <p>热衷于程序、微信新功能的开发，对于WEB开发有独到见解</p>
+            <p>要求有较强的学习能力、调试能力</p>
+            <div class="three">
+            </div>
+        </div>
+        <hr class="line3"/>
+        <div class="sixth">
+            <p class="infourth">维新工作室</p>
+            <p>具有一定的原创创作能力，善于发现生活中的亮点</p>
+            <p>看待问题视角独特，思路创新</p>
+            <div class="four">
+            </div>
+        </div>
+        <hr class="line3"/>
+        <div class="seventh">
+            <p class="infourth">微博工作室</p>
+            <p>会使用微博、人人等交际软件</p>
+            <p>具有一定的互动能力、文字编写能力和创新意识</p>
+        </div>
+        <div class="five">
+        </div>
+        </div>
+    </div>
+
+</body>
+</html>
