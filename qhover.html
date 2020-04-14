@@ -50,25 +50,24 @@
 <script src="qcommon.js"></script>
 <script>
 //chart
-var ctx, omega = 0, omegaDataSet = new Array(10), omegaMax = 0, nextTime= 0;
-for(let i = 0; i < omegaDataSet.length; i++) omegaDataSet[i] = .0;
+var ctx, omega = 0, omega2 = 0, nextTime= 0;
 var config = {
         type: 'line',
         data: {
-            labels: [.0, .0, .0, .0, .0, .0, .0, .0, .0, .0],
+            labels: [.0],
             datasets: [{
                 label: 'KP = 20, KI = 6, KD = 13',
                 backgroundColor: window.chartColors.red,
                 borderColor: window.chartColors.red,
-                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                data: [0],
                 fill: false,
-            }/*,{
-                label: 'My Second dataset',
+            },{
+                label: 'KP = 30, KI = 6, KD = 13',
                 fill: false,
                 backgroundColor: window.chartColors.blue,
                 borderColor: window.chartColors.blue,
-                data: [18, 33, 22, 19, 11, 39, 30],
-            }*/
+                data: [0],
+            }
           ]
         },
         options: {
@@ -88,8 +87,8 @@ var config = {
                     },
                     ticks: {
                         min: 0,
-                        max: 20,
-                        stepSize: 5
+                        max: 50,
+                        stepSize: 10
                     }
                 }]
             }
@@ -102,25 +101,31 @@ var config = {
     };
 
   setInterval(function() {
-    setData(config.data.datasets[0].data);
-    setLabels(config.data.labels);
-    var myLineChart = new Chart(ctx, config);
+    if(config.data.labels.length < 50){
+      setData(config.data.datasets[0].data);
+      setData2(config.data.datasets[1].data);
+      setLabels(config.data.labels);
+      var myLineChart = new Chart(ctx, config);
+    }
   }, 50);
 
   function setLabels(labels) {
     nextTime+=0.05;
     labels.push(nextTime.toFixed(2));
-    labels.shift();
+    //labels.shift();
   }
 
   function setData(data) {
     data.push(omega);
-    data.shift();
+    //data.shift();
+  }
+  function setData2(data) {
+    data.push(omega2);
+    //data.shift();
   }
 ///////////////////////////////////////////////////////////////////////////////////
 var world, body;
 var camera, scene, renderer, clock, keyboard, airplane;
-var omega;
 var yref = 2;
 var omegaGain = 1.0;
 var omegaHover;
@@ -155,12 +160,10 @@ function hoverServo (dt) {  // pass dt for integral control
 	const KI = 6;
 	const KD = 13;
 	omega = KP*error + KI*hoverServo.integral + KD*(-vv);
-
-  if(omega > omegaMax) omegaMax = omega;
-  var deleteData;
-  if(omegaDataSet.length == 100)  deleteData = omegaDataSet.shift();
-  let newLength = omegaDataSet.push(omega);
-
+  //////////////////////////////////////////////////////////////
+  let kp2 = 30, ki2 = 6, kd2 = 13;
+  omega2 = kp2*error + ki2*hoverServo.integral + kd2*(-vv);
+  //////////////////////////////////////////////////////////////
 	console.log ('pp: ' + (KP*error).toFixed(2))
 	console.log ('pi: ' + (KI*hoverServo.integral).toFixed(2))
 	console.log ('pd: ' + (KD*(-vv)).toFixed(2))
